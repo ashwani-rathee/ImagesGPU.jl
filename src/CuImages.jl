@@ -32,14 +32,4 @@ export ando3
 export scharr
 export bickley
 
-
-
-
-# convert image to gpu array 
-# do operation on gpu
-# at end of algorithm return normal array back 
-
-
-
-
 end # module

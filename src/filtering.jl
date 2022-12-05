@@ -47,7 +47,6 @@ function sobel(img::CuArray)
 
     img_new = similar(img)
     wait(corr_kernel(GpuBackend)(img_new, img, sobel_kG, sobel_offsets; ndrange=size(img), workgroupsize=(16,16)))
-    # Post-process the Sobel gradients into something comprehendable by humans
     img_new = map(x->mapc(y->y > 0 ? 1.0 : 0.0, x), img_new)
     return img_new
 end
@@ -60,7 +59,6 @@ function prewitt(img::CuArray)
 
     img_new = similar(img)
     wait(corr_kernel(GpuBackend)(img_new, img, prewitt_kG, prewitt_offsets; ndrange=size(img), workgroupsize=(16,16)))
-    # Post-process the Sobel gradients into something comprehendable by humans
     img_new = map(x->mapc(y->y > 0 ? 1.0 : 0.0, x), img_new)
     return img_new
 end
@@ -73,10 +71,22 @@ function ando3(img::CuArray)
 
     img_new = similar(img)
     wait(corr_kernel(GpuBackend)(img_new, img, ando3_kG, ando3_offsets; ndrange=size(img), workgroupsize=(16,16)))
-    # Post-process the Sobel gradients into something comprehendable by humans
     img_new = map(x->mapc(y->y > 0 ? 1.0 : 0.0, x), img_new)
     return img_new
 end
+
+# ando3
+function ando5(img::CuArray)
+    ando5_k = Kernel.ando5()
+    ando5_kG = CuArray(map(RGB{Float32}, ando5_k[1].parent))
+    ando5_offsets = abs.(ando5_k[1].offsets) .- 1
+
+    img_new = similar(img)
+    wait(corr_kernel(GpuBackend)(img_new, img, ando5_kG, ando5_offsets; ndrange=size(img), workgroupsize=(16,16)))
+    img_new = map(x->mapc(y->y > 0 ? 1.0 : 0.0, x), img_new)
+    return img_new
+end
+
 
 
 # scharr
